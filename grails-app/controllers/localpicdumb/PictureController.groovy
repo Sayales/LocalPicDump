@@ -31,7 +31,7 @@ class PictureController {
         String tags = params.tagName
         def tagList = tags.split(";")
         Set<Picture> pics = new HashSet<>();
-        for (Tag t: tagList) {
+        for (String t: tagList) {
             def taggedPics = Tag.findByTag(t.trim())?.pics
             if (taggedPics != null)
                 pics.addAll(taggedPics)
@@ -54,7 +54,7 @@ class PictureController {
             def prepTag = t.tag + ";"
             tagStr += prepTag
         }
-        render (view: 'showPic', model: [src: PictureService.getPictureSrc(pic), picId: id ,tagString: tagStr])
+        render (view: 'showPic', model: [src: PictureService.getPictureSrc(pic), picId: id, folder: pic.folder,tagString: tagStr])
     }
 
     def picEdition() {

@@ -17,7 +17,7 @@
     <g:form controller="picture" action="picEdition">
         <g:hiddenField name="picId" value="${picId}"/>
         <label>Folder: </label>
-        <g:textField name="folderName"/>
+        <g:textField name="folderName" value="${folder}"/>
         <label>Tags: </label>
         <g:textField name="tagString" value="${tagString}"/>
         <g:actionSubmit value="Confirm" action="picEdition"/>

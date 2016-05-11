@@ -26,31 +26,33 @@ class PictureService {
         pic.image = outs.toByteArray()
         pic.save(flush: true)
     }
-
+    /* @param id picture id
+    *  @param folder picture new folder
+    *  @param tags new picture tags
+    * */
     def editPicInfo(int id, String folder, String[] tags) {
         def pic = Picture.get(id)
+        pic.tags.clear()
         for (String t : tags) {
-            addTag(pic, t)
+            def tag = Tag.findByTag(t)
+            if (tag == null) {
+                tag = new Tag(tag: t)
+                tag.addToPics(pic)
+                pic.addToTags(tag)
+            } else {
+                tag.addToPics(pic)
+                pic.addToTags(tag)
+            }
+            tag.save(flush: true)
         }
-        new Folder(name: folder).save(flush: true)
+        if (Folder.findByName(folder) == null) {
+            new Folder(name: folder).save(flush: true)
+        }
         pic.folder = folder
         pic.save(flush: true)
     }
 
-    def addTag(Picture pic, String param) {
-        def tag = Tag.findByTag(param)
-        if (tag == null) {
-            tag = new Tag(tag: param)
-            tag.addToPics(pic)
-            pic.addToTags(tag)
-        }
-        else {
-            tag.addToPics(pic)
-            pic.addToTags(tag)
-        }
-        tag.save(flush: true)
-        pic.save(flush: true)
-    }
+
 
     static def getPictureSrcList(def pics) {
         List<ImageSrc> imgSources = new ArrayList<>();
