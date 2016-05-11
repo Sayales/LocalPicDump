@@ -1,12 +1,13 @@
 package localpicdumb
 
-import pl.burningice.plugins.image.ast.DBImageContainer
+
 
 
 class Picture {
-    int id
     String folder
+    String type
     byte[] image
+    static hasMany = [tags: Tag]
     static constraints = {
         image(nullable: true)
     }

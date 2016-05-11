@@ -12,6 +12,8 @@
 </head>
 
 <body>
-    <img src="${imageSrc}">
+ <g:each in="${srcList}" var="source">
+    <img src="${source}"> <br>
+ </g:each>
 </body>
 </html>

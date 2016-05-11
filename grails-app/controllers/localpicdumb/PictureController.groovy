@@ -2,9 +2,12 @@ package localpicdumb
 
 import  org.apache.commons.codec.binary.Base64 as Base64
 
+
 class PictureController {
 
-    def scaffold = Picture
+    PictureService pictureService
+
+   // def scaffold = Picture
 
     def downloadPicGet() {
         render (view: 'downloadPage')
@@ -12,26 +15,36 @@ class PictureController {
 
     def downloadFromUrl() {
         String urlName = params.picUrl
-        URL url = new URL(urlName)
-        InputStream puts = new BufferedInputStream(url.openStream())
-        ByteArrayOutputStream outs = new ByteArrayOutputStream()
-        byte[] buf = new byte[1024]
-        int n = 0
-        while (-1 != (n = puts.read(buf))) {
-            outs.write(buf, 0, n)
-        }
-        outs.close()
-        puts.close()
-        byte[] response = outs.toByteArray()
-        def pic = Picture.findById(1)
-        pic.image = response
-        pic.save(flush: true)
-        render 'pic added  from ${urlName}'
+        pictureService.downloadPic(urlName)
+        redirect (action: 'index') //temp
     }
 
-    def showPic() {
-        def pic = Picture.findById(1)
-        String imgSrc = "data:image/png;base64," + Base64.encodeBase64String(pic.image)
+    def showPic(String id) {
+        def pic = Picture.findById(Integer.valueOf(id))
+        String imgSrc = "data:image/" + pic.type + ";base64," + Base64.encodeBase64String(pic.image) // src for image
         render (view: 'showPic', model:  [imageSrc: imgSrc])
+    }
+
+    def index() {
+        def pics = Picture.findAll()
+        def imgSources = pictureService.getPictureSrcList(pics)
+        render (view: 'showPic', model: [srcList: imgSources])
+    }
+
+    def addTag(String id) {
+        pictureService.addTag(id,params.tag)
+        redirect (action: 'index')
+    }
+
+    def showTagged(String id) {
+        def pics = Tag.findByTag(id).pics
+        List<String> imgSources = pictureService.getPictureSrcList(pics)
+        render (view: 'showPic', model: [srcList: imgSources])
+    }
+
+    def showFolder(String id) {
+        def pics = Picture.findAllByFolder(id)
+        List<String> imgSources = pictureService.getPictureSrcList(pics)
+        render (view: 'showPic', model: [srcList: imgSources])
     }
 }
