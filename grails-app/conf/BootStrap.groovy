@@ -1,9 +1,9 @@
+import localpicdumb.Folder
 class BootStrap {
 
-    def initDatabaseService
 
     def init = { servletContext ->
-        /*initDatabaseService.initDB()*/
+       new Folder(name: 'random').save()
     }
     def destroy = {
     }

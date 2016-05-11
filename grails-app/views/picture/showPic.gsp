@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: Павел
-  Date: 10.05.2016
-  Time: 0:34
+  Date: 11.05.2016
+  Time: 16:07
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -12,8 +12,17 @@
 </head>
 
 <body>
- <g:each in="${srcList}" var="source">
-    <img src="${source}"> <br>
- </g:each>
+<div style="display: inline; width: 800px; margin: 0 auto">
+    <img style="border: hidden; max-height: 800px; max-width: 800px" src="${src}">
+    <g:form controller="picture" action="picEdition">
+        <g:hiddenField name="picId" value="${picId}"/>
+        <label>Folder: </label>
+        <g:textField name="folderName"/>
+        <label>Tags: </label>
+        <g:textField name="tagString" value="${tagString}"/>
+        <g:actionSubmit value="Confirm" action="picEdition"/>
+    </g:form>
+</div>
+<a href="/LocalPicDumb/picture/">Home</a>
 </body>
 </html>

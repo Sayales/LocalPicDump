@@ -2,6 +2,7 @@ package localpicdumb
 
 import grails.transaction.Transactional
 import org.apache.commons.codec.binary.Base64
+import localpicdumb.Folder
 
 @Transactional
 class PictureService {
@@ -26,8 +27,17 @@ class PictureService {
         pic.save(flush: true)
     }
 
-    def addTag(String id, def param) {
+    def editPicInfo(int id, String folder, String[] tags) {
         def pic = Picture.get(id)
+        for (String t : tags) {
+            addTag(pic, t)
+        }
+        new Folder(name: folder).save(flush: true)
+        pic.folder = folder
+        pic.save(flush: true)
+    }
+
+    def addTag(Picture pic, String param) {
         def tag = Tag.findByTag(param)
         if (tag == null) {
             tag = new Tag(tag: param)
@@ -43,10 +53,16 @@ class PictureService {
     }
 
     static def getPictureSrcList(def pics) {
-        List<String> imgSources = new ArrayList<>();
+        List<ImageSrc> imgSources = new ArrayList<>();
         for (Picture pic : pics) {
-            imgSources.add("data:image/" + pic.type + ";base64," + Base64.encodeBase64String(pic.image));
+            String src = getPictureSrc(pic)
+            imgSources.add(new ImageSrc(id: pic.id, src: src));
         }
         imgSources
+    }
+
+    static def getPictureSrc(Picture pic) {
+        String src = "data:image/" + pic.type + ";base64," + Base64.encodeBase64String(pic.image)
+        src
     }
 }
