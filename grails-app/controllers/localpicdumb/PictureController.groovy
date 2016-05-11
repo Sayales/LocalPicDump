@@ -29,10 +29,9 @@ class PictureController {
 
     def showTagged() {
         String tags = params.tagName
-        def tagList = tags.split("#")
+        def tagList = tags.split(";")
         Set<Picture> pics = new HashSet<>();
-        for (int i in 1..tagList.length - 1) {
-            String t = tagList[i]
+        for (Tag t: tagList) {
             def taggedPics = Tag.findByTag(t.trim())?.pics
             if (taggedPics != null)
                 pics.addAll(taggedPics)
