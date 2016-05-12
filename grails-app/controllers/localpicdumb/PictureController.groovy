@@ -4,48 +4,54 @@ class PictureController {
 
     PictureService pictureService
 
-    // def scaffold = Picture
 
+    def currentTag //Shitty architecture
 
     def downloadFromUrl() {
         String urlName = params.picUrl
         pictureService.downloadPic(urlName)
-        redirect(action: 'index') //temp
+        redirect(action: 'index')
     }
 
 
     def index() {
-
-        def pics = Picture.findAll()
+        def max = params?.max != null ? params.max : 30
+        def offset = params?.offset != null ? params.offset : 0
+        def pics = Picture.list([max: max, offset: offset])
         def imgSources = pictureService.getPictureSrcList(pics)
         def folders = Folder.getAll()
-        render(view: 'showAllPics', model: [srcList: imgSources, folders: folders, picCount: Picture.count()])
+        render(view: 'showAllPics', model: [srcList: imgSources, folders: folders,
+                                            picCount: Picture.count(),
+                                            paginateAction: 'index'])
     }
 
-    def list() {
-        [pictures: Picture.list(params), picCount: Picture.count()]
-    }
 
     def showTagged() {
         String tags = params.tagName
+        currentTag = tags
+        def offset = params?.offset != null ? params.offset : 0
         def tagList = tags.split(";")
-        Set<Tag> tagsSet = new HashSet<>()
-        for (String t : tagList) {
-            tagsSet.add(Tag.findByTag(t.trim()))
-        }
-        def pics = Picture.executeQuery('''SELECT picture FROM Picture picture WHERE :numberOfTags =
-        (select count(tag.id) from Picture picture2
-        inner join picture2.tags tag
-        where picture2.id = picture.id
-        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet])
+        def pics = pictureService.getTagged(tagList, offset)
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render(view: 'showAllPics', model: [srcList: imgSources])
+        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(),
+                                            paginateAction: "showTaggedGet", additionalInfo: tags])
     }
+
+    def showTaggedGet(String id){
+        String tags = id
+        def offset = params?.offset != null ? params.offset : 0
+        def tagList = tags.split(";")
+        def pics = pictureService.getTagged(tagList, offset)
+        List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
+        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(),
+                                            paginateAction: "showTaggedGet", additionalInfo: tags])
+    }
+
 
     def showFolder(String id) {
         def pics = Picture.findAllByFolder(id)
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render(view: 'showAllPics', model: [srcList: imgSources])
+        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(), paginateAction: "showFolder", additionalInfo: id])
     }
 
     def editPic(String id) {

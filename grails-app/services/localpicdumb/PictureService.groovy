@@ -9,6 +9,20 @@ class PictureService {
 
     static transactional = false
 
+    def getTagged(String[] tagList, def offset){
+        Set<Tag> tagsSet = new HashSet<>()
+        for (String t : tagList) {
+            tagsSet.add(Tag.findByTag(t.trim()))
+        }
+        def pics = Picture.executeQuery('''SELECT picture FROM Picture picture WHERE :numberOfTags =
+        (select count(tag.id) from Picture picture2
+        inner join picture2.tags tag
+        where picture2.id = picture.id
+        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet], [max: 30,
+                                                                                                        offset: offset])
+        pics
+    }
+
     def downloadPic(String urlName) {
         URL url = new URL(urlName)
         InputStream puts = new BufferedInputStream(url.openStream())
@@ -43,7 +57,7 @@ class PictureService {
                 tag.addToPics(pic)
                 pic.addToTags(tag)
             }
-            tag.save(flush: true)
+            tag.save()
         }
         if (Folder.findByName(folder) == null) {
             new Folder(name: folder).save(flush: true)
@@ -53,6 +67,9 @@ class PictureService {
     }
 
 
+    static def getTaggedCount(String[] tags) {
+
+    }
 
     static def getPictureSrcList(def pics) {
         List<ImageSrc> imgSources = new ArrayList<>();

@@ -26,6 +26,8 @@
     <a href="editPic/${source.id}"><img style="border: hidden; max-height: 200px; width: auto" src="${source.src}"></a>
 </g:each>
 <br>
+<g:paginate total="${picCount}" action="${paginateAction}" id="${additionalInfo}"  max="2"/>
+<br>
 <ul>
     <g:each in="${folders}" var="folder">
         <li><a href="showFolder/${folder.name}">${folder.name}</a></li>
