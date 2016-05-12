@@ -4,46 +4,48 @@ class PictureController {
 
     PictureService pictureService
 
-   // def scaffold = Picture
+    // def scaffold = Picture
 
 
     def downloadFromUrl() {
         String urlName = params.picUrl
         pictureService.downloadPic(urlName)
-        redirect (action: 'index') //temp
+        redirect(action: 'index') //temp
     }
-
 
 
     def index() {
+
         def pics = Picture.findAll()
         def imgSources = pictureService.getPictureSrcList(pics)
         def folders = Folder.getAll()
-        render (view: 'showAllPics', model: [srcList: imgSources, folders: folders])
+        render(view: 'showAllPics', model: [srcList: imgSources, folders: folders, picCount: Picture.count()])
     }
 
-    /*def addTag(String id) {
-        pictureService.addTag(id,params.tag)
-        redirect (action: 'index')
-    }*/
+    def list() {
+        [pictures: Picture.list(params), picCount: Picture.count()]
+    }
 
     def showTagged() {
         String tags = params.tagName
         def tagList = tags.split(";")
-        Set<Picture> pics = new HashSet<>();
-        for (String t: tagList) {
-            def taggedPics = Tag.findByTag(t.trim())?.pics
-            if (taggedPics != null)
-                pics.addAll(taggedPics)
+        Set<Tag> tagsSet = new HashSet<>()
+        for (String t : tagList) {
+            tagsSet.add(Tag.findByTag(t.trim()))
         }
+        def pics = Picture.executeQuery('''SELECT picture FROM Picture picture WHERE :numberOfTags =
+        (select count(tag.id) from Picture picture2
+        inner join picture2.tags tag
+        where picture2.id = picture.id
+        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet])
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render (view: 'showAllPics', model: [srcList: imgSources])
+        render(view: 'showAllPics', model: [srcList: imgSources])
     }
 
     def showFolder(String id) {
         def pics = Picture.findAllByFolder(id)
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render (view: 'showAllPics', model: [srcList: imgSources])
+        render(view: 'showAllPics', model: [srcList: imgSources])
     }
 
     def editPic(String id) {
@@ -54,15 +56,15 @@ class PictureController {
             def prepTag = t.tag + ";"
             tagStr += prepTag
         }
-        render (view: 'showPic', model: [src: PictureService.getPictureSrc(pic), picId: id, folder: pic.folder,tagString: tagStr])
+        render(view: 'showPic', model: [src: PictureService.getPictureSrc(pic), picId: id, folder: pic.folder, tagString: tagStr])
     }
 
     def picEdition() {
         String folder = params.folderName
         String tagString = params.tagString
-        int id = Integer.valueOf((String)params.picId)
+        int id = Integer.valueOf((String) params.picId)
         def tagsSplitted = tagString.split(";");
         pictureService.editPicInfo(id, folder, tagsSplitted)
-        redirect (action: 'index')
+        redirect(action: 'index')
     }
 }
