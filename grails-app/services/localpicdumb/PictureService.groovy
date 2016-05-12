@@ -2,23 +2,26 @@ package localpicdumb
 
 import grails.transaction.Transactional
 import org.apache.commons.codec.binary.Base64
-import localpicdumb.Folder
 
 @Transactional
 class PictureService {
 
     static transactional = false
 
-    def getTagged(String[] tagList, def offset){
+    def getTagged(String[] tagList, def offset) {
         Set<Tag> tagsSet = new HashSet<>()
         for (String t : tagList) {
-            tagsSet.add(Tag.findByTag(t.trim()))
+            if (!t.equals(""))
+                tagsSet.add(Tag.findByTag(t.trim()))
+        }
+        if (tagsSet.isEmpty()) {
+            return Picture.list(max: 30, offset: offset)
         }
         def pics = Picture.executeQuery('''SELECT picture FROM Picture picture WHERE :numberOfTags =
         (select count(tag.id) from Picture picture2
         inner join picture2.tags tag
         where picture2.id = picture.id
-        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet], [max: 30,
+        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet], [max   : 30,
                                                                                                         offset: offset])
         pics
     }
@@ -37,32 +40,45 @@ class PictureService {
         String revUrl = urlName.reverse()
         def extension = revUrl.split("\\.")[0].reverse() // Picture extension
         def pic = new Picture(folder: 'random', type: extension)
+        def folder = Folder.findByName('random')
+        folder.picCount = folder.picCount + 1
+        folder.save(flush: true)
         pic.image = outs.toByteArray()
         pic.save(flush: true)
     }
     /* @param id picture id
-    *  @param folder picture new folder
+    *  @param folderStr picture new folderStr
     *  @param tags new picture tags
     * */
-    def editPicInfo(int id, String folder, String[] tags) {
+
+    def editPicInfo(int id, String folderStr, String[] tags) {
         def pic = Picture.get(id)
         pic.tags.clear()
         for (String t : tags) {
-            def tag = Tag.findByTag(t)
-            if (tag == null) {
-                tag = new Tag(tag: t)
-                tag.addToPics(pic)
-                pic.addToTags(tag)
-            } else {
-                tag.addToPics(pic)
-                pic.addToTags(tag)
+            if (!t.equals("")) {
+                def tag = Tag.findByTag(t)
+                if (tag == null) {
+                    tag = new Tag(tag: t)
+                    tag.addToPics(pic)
+                    pic.addToTags(tag)
+                } else {
+                    tag.addToPics(pic)
+                    pic.addToTags(tag)
+                }
+                tag.save()
             }
-            tag.save()
         }
-        if (Folder.findByName(folder) == null) {
-            new Folder(name: folder).save(flush: true)
+        if (Folder.findByName(folderStr) == null) {
+            new Folder(name: folderStr, picCount: 1).save(flush: true)
+        } else {
+            def newExistFolder = Folder.findByName(folderStr)
+            newExistFolder.picCount = newExistFolder.picCount + 1
+            newExistFolder.save()
         }
-        pic.folder = folder
+        def oldPicFolder = Folder.findByName(pic.folder)
+        oldPicFolder.picCount = oldPicFolder.picCount - 1
+        oldPicFolder.save()
+        pic.folder = folderStr
         pic.save(flush: true)
     }
 

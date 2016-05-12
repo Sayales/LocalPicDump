@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS folder_picture;
+DROP TABLE IF EXISTS folder;
 DROP TABLE IF EXISTS picture_tags;
 DROP TABLE IF EXISTS tag;
 DROP TABLE IF EXISTS picture;

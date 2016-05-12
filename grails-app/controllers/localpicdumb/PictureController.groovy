@@ -4,9 +4,6 @@ class PictureController {
 
     PictureService pictureService
 
-
-    def currentTag //Shitty architecture
-
     def downloadFromUrl() {
         String urlName = params.picUrl
         pictureService.downloadPic(urlName)
@@ -15,8 +12,8 @@ class PictureController {
 
 
     def index() {
-        def max = params?.max != null ? params.max : 30
-        def offset = params?.offset != null ? params.offset : 0
+        def max = params?.max  ?: 30
+        def offset = params?.offset ?: 0
         def pics = Picture.list([max: max, offset: offset])
         def imgSources = pictureService.getPictureSrcList(pics)
         def folders = Folder.getAll()
@@ -28,30 +25,23 @@ class PictureController {
 
     def showTagged() {
         String tags = params.tagName
-        currentTag = tags
-        def offset = params?.offset != null ? params.offset : 0
+        def offset = params.offset  ?: 0
         def tagList = tags.split(";")
         def pics = pictureService.getTagged(tagList, offset)
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
         render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(),
-                                            paginateAction: "showTaggedGet", additionalInfo: tags])
-    }
-
-    def showTaggedGet(String id){
-        String tags = id
-        def offset = params?.offset != null ? params.offset : 0
-        def tagList = tags.split(";")
-        def pics = pictureService.getTagged(tagList, offset)
-        List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(),
-                                            paginateAction: "showTaggedGet", additionalInfo: tags])
+                                            paginateAction: "showTagged", params:
+                                                    [tagName: tags]
+        ])
     }
 
 
     def showFolder(String id) {
-        def pics = Picture.findAllByFolder(id)
+        def pics = Picture.findAllByFolder(id,[max: 30, offset: params.offset])
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(), paginateAction: "showFolder", additionalInfo: id])
+        println(Folder.findByName(id).picCount)
+        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Folder.findByName(id).picCount, paginateAction: "showFolder",
+                                            additionalInfo: id])
     }
 
     def editPic(String id) {
@@ -69,7 +59,7 @@ class PictureController {
         String folder = params.folderName
         String tagString = params.tagString
         int id = Integer.valueOf((String) params.picId)
-        def tagsSplitted = tagString.split(";");
+        def tagsSplitted = tagString?.split(";");
         pictureService.editPicInfo(id, folder, tagsSplitted)
         redirect(action: 'index')
     }
