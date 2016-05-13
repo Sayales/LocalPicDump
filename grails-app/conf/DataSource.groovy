@@ -36,6 +36,7 @@ hibernate {
 }
 
 // environment specific settings
+/*
 environments {
     development {
         dataSource {
@@ -104,3 +105,4 @@ environments {
         }
     }
 }
+*/

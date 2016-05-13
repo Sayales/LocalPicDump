@@ -19,7 +19,7 @@
         <label>Folder: </label>
         <g:textField name="folderName" value="${folder}"/>
         <label>Tags: </label>
-        <g:textField name="tagString" value="${tagString}"/>
+        <g:textField name="tagString" value="${tagString}" placeholder="Enter tags with ';' delimiter"/>
         <g:actionSubmit value="Confirm" action="picEdition"/>
     </g:form>
 </div>

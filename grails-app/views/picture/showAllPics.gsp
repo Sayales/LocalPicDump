@@ -14,11 +14,11 @@
 <body>
 <div style="display: inline">
     <g:form controller="picture" action="downloadFromUrl">
-        <g:textField name="picUrl"/>
-        <g:actionSubmit value="add Pic" action="downloadFromUrl "/>
+        <g:textField name="picUrl" placeholder="Picture url"/>
+        <g:actionSubmit value="add Pic" action="downloadFromUrl"/>
     </g:form>
     <g:form contoller="picture" action="showTagged" method="get">
-        <g:textField name="tagName"/>
+        <g:textField name="tagName" placeholder="Enter tags with ';' delimiter"/>
         <g:actionSubmit value="Show with tag" action="showTagged"/>
     </g:form>
 </div>

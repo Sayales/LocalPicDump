@@ -40,7 +40,7 @@
             var currElem = arr[i];
             var elem = document.createElement("a");
             var currElemType = (currElem.getElementsByClassName('desktop')[0].href.indexOf('webm') == -1)
-            elem.href = "http://localhost:8080/LocalPicDumb/picture/downloadFromUrl?picUrl=" + currElem.getElementsByClassName('desktop')[0].href;
+            elem.href = "http://localhost:1337/LocalPicDumb/picture/downloadFromUrl?picUrl=" + currElem.getElementsByClassName('desktop')[0].href;
             elem.text = 'To localPicDump';
             elem.target = '_blank';
             if (currElemType) {
