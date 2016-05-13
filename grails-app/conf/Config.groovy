@@ -31,17 +31,6 @@ grails.mime.types = [ // the first one is the default format
     xml:           ['text/xml', 'application/xml']
 ]
 
-bi.Picture = [
-        images: ['large':[scale:[width:800, height:600, type:ScaleType.APPROXIMATE],],
-                  'small':[scale:[width:100, height:100, type:ScaleType.ACCURATE],]
-                 ],
-                 constraints:[
-                         nullable:true,
-                         maxSize:10000000,
-                         contentType:['image/gif', 'image/png', 'image/jpeg', 'image/jpg']
-                 ]
-
-]
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
@@ -53,6 +42,10 @@ grails.views.default.codec = "html"
 // If unspecified, controllers are prototype scoped.
 grails.controllers.defaultScope = 'singleton'
 
+//tomcat settings
+tomcat.deploy.username="admin"
+tomcat.deploy.password="admin"
+tomcat.deploy.url="http://localhost:8080/manager"
 // GSP settings
 grails {
     views {
