@@ -83,8 +83,21 @@ class PictureService {
     }
 
 
-    static def getTaggedCount(String[] tags) {
-
+    static def getTaggedCount(String[] tagList) {
+        Set<Tag> tagsSet = new HashSet<>()
+        for (String t : tagList) {
+            if (!t.equals(""))
+                tagsSet.add(Tag.findByTag(t.trim()))
+        }
+        if (tagsSet.isEmpty()) {
+            return Picture.count()
+        }
+        def count = Picture.executeQuery('''SELECT count(*) FROM Picture picture WHERE :numberOfTags =
+        (select count(tag.id) from Picture picture2
+        inner join picture2.tags tag
+        where picture2.id = picture.id
+        and tag in (:tags))''', [numberOfTags: Integer.toUnsignedLong(tagsSet.size()), tags: tagsSet])[0]
+        count
     }
 
     static def getPictureSrcList(def pics) {

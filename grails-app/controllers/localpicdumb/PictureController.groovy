@@ -12,8 +12,8 @@ class PictureController {
 
 
     def index() {
-        def max = params?.max  ?: 30
-        def offset = params?.offset ?: 0
+        def max = params.max  ?: 30
+        def offset = params.offset ?: 0
         def pics = Picture.list([max: max, offset: offset])
         def imgSources = pictureService.getPictureSrcList(pics)
         def folders = Folder.getAll()
@@ -28,8 +28,9 @@ class PictureController {
         def offset = params.offset  ?: 0
         def tagList = tags.split(";")
         def pics = pictureService.getTagged(tagList, offset)
+        def picCount = PictureService.getTaggedCount(tagList)
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        render(view: 'showAllPics', model: [srcList: imgSources, picCount: Picture.count(),
+        render(view: 'showAllPics', model: [srcList: imgSources, picCount: picCount,
                                             paginateAction: "showTagged", params:
                                                     [tagName: tags]
         ])
@@ -39,7 +40,6 @@ class PictureController {
     def showFolder(String id) {
         def pics = Picture.findAllByFolder(id,[max: 30, offset: params.offset])
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
-        println(Folder.findByName(id).picCount)
         render(view: 'showAllPics', model: [srcList: imgSources, picCount: Folder.findByName(id).picCount, paginateAction: "showFolder",
                                             additionalInfo: id])
     }
