@@ -23,6 +23,6 @@
         <g:actionSubmit value="Confirm" action="picEdition"/>
     </g:form>
 </div>
-<a href="/LocalPicDumb/picture/">Home</a>
+<a href="/LocalPicDumb/picture/">Home</a> <a href="/LocalPicDumb/picture/remove/${picId}">Delete</a>
 </body>
 </html>

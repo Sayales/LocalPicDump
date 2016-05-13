@@ -63,4 +63,10 @@ class PictureController {
         pictureService.editPicInfo(id, folder, tagsSplitted)
         redirect(action: 'index')
     }
+
+    def remove(String id) {
+        def pic = Picture.get(Integer.valueOf(id))
+        pic.delete(flush: true)
+        redirect(action: 'index')
+    }
 }
