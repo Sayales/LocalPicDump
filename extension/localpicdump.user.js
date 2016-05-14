@@ -40,13 +40,13 @@ function main() {
             }
         }
     });
+    prevHeight = document.body.offsetHeight;
 }
 main();
 var prevHeight;
 window.onscroll = function (ev) { //лютый костыль для бесконечной прокрутки
     if (document.body.offsetHeight > prevHeight) {
         main();
-        prevHeight = document.body.offsetHeight;
     }
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
         prevHeight = document.body.offsetHeight
