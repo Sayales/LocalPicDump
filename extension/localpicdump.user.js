@@ -10,14 +10,22 @@
 // @include https://2ch.hk/*
 
 
-    // normalized window
+// normalized window
 
 
-    // additional url check.
-    // Google Chrome do not treat @match as intended sometimes.
-   /* if (/https:\/\/2ch.hk/.test(w.location.href)) {*/
-        //Below is the userscript code itself
+// additional url check.
+// Google Chrome do not treat @match as intended sometimes.
+/* if (/https:\/\/2ch.hk/.test(w.location.href)) {*/
+//Below is the userscript code itself
 
+
+
+function main() {
+    //Below is the userscript code itself
+    var domReady = function (callback) {
+        document.readyState === "interactive" || document.readyState === "complete" ? callback() : document.addEventListener("DOMContentLoaded", callback);
+    };
+    domReady(function () {
         var arr = document.getElementsByClassName("file-attr");
         for (var i = 0; i < arr.length; i++) {
             var currElem = arr[i];
@@ -26,11 +34,24 @@
             elem.href = "http://localhost:1337/LocalPicDumb/picture/downloadFromUrl?picUrl=" + currElem.getElementsByClassName('desktop')[0].href;
             elem.text = 'To localPicDump';
             elem.target = '_blank';
-            if (currElemType) {
-                arr[i].appendChild(elem)
+            elem.setAttribute("class", "local-pic-dump");
+            if (currElemType && currElem.getElementsByClassName("local-pic-dump").length < 1) {
+                currElem.appendChild(elem)
             }
         }
-
-   /* }*/
+    });
+}
+main();
+var prevHeight;
+window.onscroll = function (ev) { //лютый костыль для бесконечной прокрутки
+    if (document.body.offsetHeight > prevHeight) {
+        main();
+        prevHeight = document.body.offsetHeight;
+    }
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        prevHeight = document.body.offsetHeight
+    }
+};
+/* }*/
 
 
