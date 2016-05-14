@@ -1,0 +1,17 @@
+{
+  "manifest_version" : 2,
+  "background" : {
+  "scripts" : ["localpicdump.user.js"]
+},
+  "content_scripts" : [
+    {
+      "js":[ "localpicdump.user.js" ],
+      "matches":[ "https://2ch.hk/*" ],
+      "run_at":"document_end"
+    }
+  ],
+  "description" : "",
+  "name" : "LocalPicDump userscript",
+  "permissions" : [ "http://2ch.hk/*", "unlimitedStorage"],
+  "version" : "1.0.0"
+}
