@@ -17,5 +17,5 @@ Web-server, site and userscript for 2ch.hk to store pics on localhost
     * To upload pics > 4MB you need to set **max_allowed_packet** MySQL variable
   2. Execute grails prod run-app command in the root directory of project
   3. Applictaion now avalible on **http://localhost:1337/LocalPicDumb**
-  4. To install userscript just drag-n-drop **localpicdump.user.js** file on **chrome://extension** page. Extension will be added to google chrome web store soon
+  4. To install userscript just download unpacked extension in dev mode from **/extension** folder
   
