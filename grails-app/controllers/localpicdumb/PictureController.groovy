@@ -32,7 +32,7 @@ class PictureController {
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
         render(view: 'showAllPics', model: [srcList: imgSources, picCount: picCount,
                                             paginateAction: "showTagged", params:
-                                                    [tagName: tags]
+                                                    [tagName: tags], folders: Folder.list()
         ])
     }
 
@@ -41,7 +41,7 @@ class PictureController {
         def pics = Picture.findAllByFolder(id,[max: 30, offset: params.offset])
         List<ImageSrc> imgSources = pictureService.getPictureSrcList(pics)
         render(view: 'showAllPics', model: [srcList: imgSources, picCount: Folder.findByName(id).picCount, paginateAction: "showFolder",
-                                            additionalInfo: id])
+                                            additionalInfo: id, folders: Folder.list()])
     }
 
     def editPic(String id) {
