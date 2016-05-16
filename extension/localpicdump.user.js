@@ -4,7 +4,7 @@
 // ==UserScript==
 // @name local-pic-dump
 // @description User script for local pic dumping on 2ch
-// @author Opokin Pavel
+// @author Sayales
 // @license MIT
 // @version 0.1
 // @include https://2ch.hk/*
