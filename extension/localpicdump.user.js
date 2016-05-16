@@ -19,7 +19,7 @@
 //Below is the userscript code itself
 
 
-
+(function() { 
 function main() {
     //Below is the userscript code itself
     var domReady = function (callback) {
@@ -51,7 +51,9 @@ window.onscroll = function (ev) { //лютый костыль для беско�
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
         prevHeight = document.body.offsetHeight
     }
-};
+}
+    
+}).call(this);
 /* }*/
 
 
