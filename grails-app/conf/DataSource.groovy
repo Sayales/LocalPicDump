@@ -1,11 +1,11 @@
 dataSource {
     pooled = true
     dbCreate = "update"
-    url = "jdbc:mysql://localhost:3306/grailbase"
-    driverClassName = "com.mysql.jdbc.Driver"
-    dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-    username = "root"
-    password = "root"
+    url = "jdbc:postgresql://localhost:5432/postgres"
+    driverClassName = "org.postgresql.Driver"
+    dialect = org.hibernate.dialect.PostgreSQL9Dialect
+    username = "postgres"
+    password = "postgrespass"
     properties {
         jmxEnabled = true
         initialSize = 5
